@@ -1,0 +1,33 @@
+#pdf-review{
+	float: left;
+	width: 100%;
+	max-height: 1200px;
+	overflow-y: scroll;
+	height: 1200px;
+	border: none;
+	margin-bottom: 10px;
+}
+
+.pdf-review-create{
+	margin-top: 10px;
+}
+
+.check-invoice-client{
+	margin-right: 3px;
+}
+
+#content-review{
+    width: 100%;
+    float: left;
+}
+
+#content-tab{
+	float: left;
+    width: 60%;
+}
+
+#content-pdf-review{
+	float: left;
+    width: 38%;
+    margin-left: 2%;
+}
