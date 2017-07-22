@@ -23,9 +23,9 @@ class modPdfReview extends DolibarrModules
 		$this->numero = 7104065;	
 		$this->rights_class = 'pdfreview';
 		$this->special = 0; // Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
-		$this->family = "crm"; // Family can be 'crm','financial','hr','projects','products','ecm','technic','interface','other'
+		$this->family = "financial"; // Family can be 'crm','financial','hr','projects','products','ecm','technic','interface','other'
 		$this->name = preg_replace('/^mod/i','',get_class($this));
-		$this->description = $langs->trans("PdfReviewDescription");
+		$this->description = "Rendu des fichiers PDF dans les factures";
 		$this->editor_name = 'Lachhab Ismail';
 		$this->editor_url = 'lachhab.ismail@gmail.com';
 		$this->version = '1.0';
@@ -36,7 +36,7 @@ class modPdfReview extends DolibarrModules
 		$this->module_parts = array(
 			'css' => array(
 					'/pdfreview/css/pdfreview.css',
-					'/pdfreview/js/text_layer_builder.css'
+					'/pdfreview/css/text_layer_builder.css'
 					),
 			'js' => array(
 				'/pdfreview/js/pdfjs-1.6.210/web/compatibility.js',
