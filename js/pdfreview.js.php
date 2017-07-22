@@ -9,7 +9,7 @@ print("var DOL_URL_ROOT = '" . DOL_URL_ROOT . "';\n");
 ?>
 
 
-function pdf_review_show_pdf(position) {
+function pdf_review_show_pdf(position, pdfUrl) {
 
     if (position == 0) {
         console.log('display pdf disabled');
@@ -19,63 +19,66 @@ function pdf_review_show_pdf(position) {
     console.log('display pdf in position ' + position);
 
     var hrefOrigin = new URL(window.location.href);
-    var pdfURL = "";
 
-    if (hrefOrigin.searchParams.has('facid') || hrefOrigin.searchParams.has('id')) {
-        if ($('#builddoc_form > .liste > tbody > tr').length > 2)
-            pdfURL = $('#builddoc_form > .liste > tbody > tr:eq(2) > td > a:eq(0)').attr('href');
-        else
-            pdfURL = $('#builddoc_form > .liste > tbody > tr:eq(1) > td > a:eq(0)').attr('href');
+    if (pdfUrl == undefined) {
+        if (hrefOrigin.searchParams.has('facid') || hrefOrigin.searchParams.has('id')) {
 
-        if (pdfURL == undefined) {
-            console.log('nothing to show: pdfURL undefined');
-            return;
+            if ($('#builddoc_form > .liste > tbody > tr').length > 2)
+                pdfUrl = $('#builddoc_form > .liste > tbody > tr:eq(2) > td > a:eq(0)').attr('href');
+            else
+                pdfUrl = $('#builddoc_form > .liste > tbody > tr:eq(1) > td > a:eq(0)').attr('href');
         }
     }
 
-    console.log('pdfURL = ' + pdfURL);
+    if (pdfUrl == undefined || pdfUrl == '') {
+        console.log('nothing to show: pdfUrl undefined');
+        return;
+    }
+
+    console.log('pdfUrl = ' + pdfUrl);
     var urlView = hrefOrigin.origin + '/' + DOL_URL_ROOT + '/custom/pdfreview/js/pdfjs-1.6.210/web/viewer.html?pdfurl=' + hrefOrigin.origin;
 
     console.log('urlView = ' + urlView);
 
-    var $iframe = $('<iframe id="pdf-viewer" src="' + urlView + pdfURL + '" class="pdf-viewer-' + ((hrefOrigin.searchParams.has('action') && hrefOrigin.searchParams.get('action') == "create") ? "create" : "edit") + '"></iframe>');
-    var $content_pdf_review = $('<div id="content-pdf-review">').append($iframe);
+    var $iframe = $('<iframe id="pdf-viewer" src="' + urlView + pdfUrl + '" class="pdf-viewer-' + ((hrefOrigin.searchParams.has('action') && hrefOrigin.searchParams.get('action') == "create") ? "create" : "edit") + '"></iframe>');
 
+    var $content_pdf_review = $('#content-pdf-review');
+    if ($content_pdf_review.length == 0) {
+        $content_pdf_review = $('<div id="content-pdf-review">');
+    }
+    $content_pdf_review.empty().append($iframe);
+
+    var $fiche = $('.fiche');
     if (position == 1) {
+        // Config droite
         $content_pdf_review.addClass('pdf-viewer-right');
-        var $fiche = $('.fiche');
         $fiche.css({
             'width': '59%',
             'display': 'inline-block',
             'margin-right': '0'
         });
         $content_pdf_review.insertAfter($fiche);
-
-
-//            $('#id-right > .fiche').prepend('<div id="content-review"></div>');
-//            var content_review = $('#content-review');
-//            content_review.append('<div id="content-tab"></div>');
-//            var content_tab = $('#content-tab');
-//            content_tab.append($('#id-right > .fiche > .tabs'));
-//            content_tab.append($('#id-right > .fiche > .tabBar'));
-//            content_review.append('<div id="content-pdf-review"></div>');
-
-    } else {
+    } else if (position == 2) {
+        // Config bottom
         $content_pdf_review.addClass('pdf-viewer-bottom');
         $content_pdf_review.insertAfter($(".tabsAction"));
+    } else if (position == 3) {
+        // Ajout rapide
+        $content_pdf_review.addClass('pdf-viewer-bottom');
+        $content_pdf_review.insertAfter($fiche);
     }
-
-    $(document).on('click', 'a.pictopreview', function (event) {
-        event.preventDefault();
-        var pdfURL = $(this).parent('td').find('a:eq(0)').attr('href');
-        var srcIframe = urlView + pdfURL;
-        $('#pdf-review').attr("src", srcIframe).show();
-    });
-
 
 }
 // Common pages
 $(document).ready(function () {
+
+    $('body').on('click', '#ecm-layout-center a.pictopreview', function (event) {
+        event.preventDefault();
+        var pdfUrl = $(this).parent('td').find('a:eq(0)').attr('href');
+        console.log('Click on invoice checkbox pdfUrl = ' + pdfUrl);
+        pdf_review_show_pdf(3, pdfUrl);
+    });
+
 
     var pathReview = [
         {
