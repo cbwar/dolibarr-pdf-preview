@@ -21,7 +21,11 @@ function pdf_review_show_pdf(position, pdfUrl) {
     var hrefOrigin = new URL(window.location.href);
 
     if (pdfUrl == undefined) {
-        if (hrefOrigin.searchParams.has('facid') || hrefOrigin.searchParams.has('id')) {
+
+        // Onglet fiche
+        var $tab = $('.tabsElemActive>a');
+
+        if (hrefOrigin.searchParams.has('facid') || hrefOrigin.searchParams.has('id') || $tab.length > 0) {
 
             if ($('#builddoc_form > .liste > tbody > tr').length > 2)
                 pdfUrl = $('#builddoc_form > .liste > tbody > tr:eq(2) > td > a:eq(0)').attr('href');
@@ -104,6 +108,14 @@ $(document).ready(function () {
         {
             path: DOL_URL_ROOT + "/supplier_proposal/card.php",
             position: '<?= $conf->global->position_facture_proposition_commerciale_fournisseur ?>'
+        },
+        {
+            path: DOL_URL_ROOT + "/custom/quikaddinvoice/quikaddinvoicesupplier.php",
+            position: '<?= $conf->global->position_facture_fournisseur ?>'
+        },
+        {
+            path: DOL_URL_ROOT + "/custom/quikaddinvoice/quikaddinvoicecustomer.php",
+            position: '<?= $conf->global->position_facture_client ?>'
         }
     ];
 
