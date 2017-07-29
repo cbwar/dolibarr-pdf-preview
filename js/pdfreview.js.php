@@ -151,11 +151,11 @@ $(document).ready(function () {
         },
         {
             path: DOL_URL_ROOT + "/custom/quikaddinvoice/quikaddinvoicesupplier.php",
-            position: 3
+            position: '<?= $conf->global->position_facture_fournisseur ?>'
         },
         {
             path: DOL_URL_ROOT + "/custom/quikaddinvoice/quikaddinvoicecustomer.php",
-            position: 3
+            position: '<?= $conf->global->position_facture_client ?>'
         }
     ];
 
@@ -171,7 +171,7 @@ $(document).ready(function () {
     });
 //    console.dir(currentPage);
 
-    if (currentPage.length > 0) {
+    if (currentPage.length > 0 && invoice_quick_add_step() != 1) {
         pdf_review_show_pdf(currentPage[0].position);
     }
 });
