@@ -151,11 +151,11 @@ $(document).ready(function () {
         },
         {
             path: DOL_URL_ROOT + "/custom/quikaddinvoice/quikaddinvoicesupplier.php",
-            position: '<?= $conf->global->position_facture_fournisseur ?>'
+            position: 3
         },
         {
             path: DOL_URL_ROOT + "/custom/quikaddinvoice/quikaddinvoicecustomer.php",
-            position: '<?= $conf->global->position_facture_client ?>'
+            position: 3
         }
     ];
 
