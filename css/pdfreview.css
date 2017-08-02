@@ -18,7 +18,7 @@ iframe#pdf-viewer {
 .pdf-review-fiche-left {
     width: 59%;
     display: inline-block;
-    margin-right: 0;
+    margin-right: 0 !important;
 }
 
 .pdf-review-placeholder-right {
