@@ -45,7 +45,7 @@ function pdf_review_load_iframe(pdfUrl) {
     var urlView = hrefOrigin.origin + '/' + DOL_URL_ROOT + '/custom/pdfreview/js/pdfjs-1.6.210/web/viewer.html?pdfurl=' + pdfUrl;
     console.log('pdf_review_load_iframe: urlView = ' + urlView);
 
-    return $('<iframe id="pdf-viewer" src="' + urlView + '" class="pdf-viewer-' + ((hrefOrigin.searchParams.has('action') && hrefOrigin.searchParams.get('action') == "create") ? "create" : "edit") + '"></iframe>');
+    return $('<iframe id="pdf-viewer" src="' + urlView + '"></iframe>');
 }
 
 
