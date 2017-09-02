@@ -42,14 +42,16 @@ function pdf_review_load_iframe(pdfUrl) {
         pdfUrl = pdf_review_find_pdf_url();
     }
 
-    var urlView = hrefOrigin.origin + '/' + DOL_URL_ROOT + '/custom/pdfreview/js/pdfjs-1.6.210/web/viewer.html?pdfurl=' + pdfUrl;
-    console.log('pdf_review_load_iframe: urlView = ' + urlView);
+    if (pdfUrl !== undefined) {
+        var urlView = hrefOrigin.origin + '/' + DOL_URL_ROOT + '/custom/pdfreview/js/pdfjs-1.6.210/web/viewer.html?pdfurl=' + pdfUrl;
+        console.log('pdf_review_load_iframe: urlView = ' + urlView);
 
-    return $('<iframe id="pdf-viewer" src="' + urlView + '"></iframe>');
+        return $('<iframe id="pdf-viewer" src="' + urlView + '"></iframe>');
+    }
 }
 
 
-function pdf_review_show_pdf(position, pdfUrl) {
+function pdf_review_show_pdf(position, pdfUrl, switchButtons = true) {
 
     if (position == 0) {
         console.log('pdf_review_show_pdf: display pdf disabled');
@@ -62,7 +64,12 @@ function pdf_review_show_pdf(position, pdfUrl) {
 
     var $placeholder_bottom = $('.pdf-review-placeholder-bottom');
     if ($placeholder_bottom.length == 0) {
-        $placeholder_bottom = $('<div class="pdf-review-placeholder-bottom"></div>').hide().insertAfter($(".fiche .tabsAction"));
+        $placeholder_bottom = $('<div class="pdf-review-placeholder-bottom"></div>').hide();
+        if ($(".fiche .tabsAction").length > 0) {
+            $placeholder_bottom.insertAfter($(".fiche .tabsAction"));
+        } else {
+            $placeholder_bottom.insertAfter($(".fiche"));
+        }
     }
 
     var $placeholder_bottom2 = $('.pdf-review-placeholder-bottom-2');
@@ -91,7 +98,9 @@ function pdf_review_show_pdf(position, pdfUrl) {
                 e.preventDefault();
                 pdf_review_show_pdf(2);
             })
-        $placeholder_right.empty().append($button).append($pdf_review_contents).show();
+        $placeholder_right.empty();
+        if (switchButtons) $placeholder_right.append($button);
+        $placeholder_right.append($pdf_review_contents).show();
         $placeholder_bottom.hide();
         $fiche.addClass('pdf-review-fiche-left');
 
@@ -103,7 +112,9 @@ function pdf_review_show_pdf(position, pdfUrl) {
                 pdf_review_show_pdf(1);
             });
 
-        $placeholder_bottom.empty().append($button).append($pdf_review_contents).show();
+        $placeholder_bottom.empty();
+        if (switchButtons) $placeholder_bottom.append($button);
+        $placeholder_bottom.append($pdf_review_contents).show();
         $placeholder_right.hide();
 
     } else if (position == 3) {
@@ -123,6 +134,9 @@ $(document).ready(function () {
         pdf_review_show_pdf(3, pdfUrl);
     });
 
+    $('.pdf-review-link').click(function () {
+        pdf_review_show_pdf(1, $(this).attr('data-src'), false);
+    });
 
     var pathReview = [
         {
@@ -156,6 +170,10 @@ $(document).ready(function () {
         {
             path: DOL_URL_ROOT + "/custom/quikaddinvoice/quikaddinvoicecustomer.php",
             position: '<?= $conf->global->position_facture_client ?>'
+        },
+        {
+            path: DOL_URL_ROOT + "/accountancy/supplier/list.php",
+            position: '2'
         }
     ];
 
@@ -171,7 +189,7 @@ $(document).ready(function () {
     });
 //    console.dir(currentPage);
 
-    if (currentPage.length > 0 && invoice_quick_add_step() != 1) {
+    if (currentPage.length > 0 && invoice_quick_add_step() != 1 && hrefOrigin.pathname != DOL_URL_ROOT + "/accountancy/supplier/list.php") {
         pdf_review_show_pdf(currentPage[0].position);
     }
 });

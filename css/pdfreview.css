@@ -1,8 +1,7 @@
 iframe#pdf-viewer {
     width: 100%;
-    max-height: 600px;
+    height: 1024px;
     overflow-y: scroll;
-    height: 900px;
     border: none;
     margin-bottom: 10px;
 }
