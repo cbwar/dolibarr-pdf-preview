@@ -14,15 +14,9 @@ function pdf_review_find_pdf_url() {
     var hrefOrigin = new URL(window.location.href);
     var pdfUrl;
 
-    // Onglet fiche
-    var $tab = $('.tabsElemActive>a');
-
-    if (hrefOrigin.searchParams.has('facid') || hrefOrigin.searchParams.has('id') || $tab.length > 0) {
-
-        if ($('#builddoc_form .liste > tbody > tr').length > 2)
-            pdfUrl = $('#builddoc_form .liste > tbody > tr:eq(2) > td > a:eq(0)').attr('href');
-        else
-            pdfUrl = $('#builddoc_form .liste > tbody > tr:eq(1) > td > a:eq(0)').attr('href');
+    var $link = $('a[mime="application/pdf"]');
+    if ($link.length > 0) {
+        pdfUrl = $link.attr('href');
     }
 
     if (pdfUrl == undefined || pdfUrl == '') {
@@ -44,10 +38,7 @@ function pdf_review_load_iframe(pdfUrl) {
     }
 
     if (pdfUrl !== undefined) {
-        var urlView = hrefOrigin.origin + '/' + DOL_URL_ROOT + '/custom/' + PDFREVIEW_DIR + '/js/pdfjs-1.6.210/web/viewer.html?pdfurl=' + pdfUrl;
-        console.log('pdf_review_load_iframe: urlView = ' + urlView);
-
-        return $('<iframe id="pdf-viewer" src="' + urlView + '"></iframe>');
+        return $('<iframe id="pdf-viewer" src="' + pdfUrl + '"></iframe>');
     }
 }
 
@@ -126,7 +117,7 @@ function pdf_review_show_pdf(position, pdfUrl, switchButtons = true) {
 }
 
 // Common pages
-$(document).ready(function () {
+$(function () {
 
     $('body').on('click', '#ecm-layout-center a.pictopreview', function (event) {
         event.preventDefault();
@@ -179,16 +170,12 @@ $(document).ready(function () {
     ];
 
     var hrefOrigin = new URL(window.location.href);
-//
-//    console.dir(pathReview);
-//    console.dir(hrefOrigin.pathname);
 
     var currentPage = $.grep(pathReview, function (n) {
         if (n.path == hrefOrigin.pathname) {
             return n;
         }
     });
-//    console.dir(currentPage);
 
     var invoice_quick_add = typeof invoice_quick_add_step === 'function' && invoice_quick_add_step() != 1 || true
 

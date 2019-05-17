@@ -1,15 +1,12 @@
 <?php
+require __DIR__ . '/../../bootstrap.php';
 
-/*
- *  Copyright (C) 2016      Lachhab Ismail <lachhab.ismail@gmail.com>
- */
-
-include_once DOL_DOCUMENT_ROOT . '/core/modules/DolibarrModules.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/modules/DolibarrModules.class.php';
 
 /**
  *  Description and activation class for module MyModule
  */
-class modPdfReview extends DolibarrModules
+class modPdfReview extends \DolibarrModules
 {
     /**
      * Constructor. Define names, constants, directories, boxes, permissions
@@ -20,7 +17,7 @@ class modPdfReview extends DolibarrModules
     {
         global $langs, $conf;
 
-        $moduleDir = basename(dirname(dirname(__DIR__)) . '');
+        $moduleDir = get_current_plugin_dirname();
 
         $this->db = $db;
         $this->numero = 7104065;
@@ -29,9 +26,9 @@ class modPdfReview extends DolibarrModules
         $this->family = "financial"; // Family can be 'crm','financial','hr','projects','products','ecm','technic','interface','other'
         $this->name = preg_replace('/^mod/i', '', get_class($this));
         $this->description = "Rendu des fichiers PDF dans les factures";
-        $this->editor_name = 'Lachhab Ismail';
-        $this->editor_url = 'lachhab.ismail@gmail.com';
-        $this->version = '1.0';
+        $this->editor_name = 'Lachhab Ismail, Lisch Raphael';
+        $this->editor_url = 'lachhab.ismail@gmail.com, raphael.lisch@gmail.com';
+        $this->version = '1.1';
         $this->langfiles = array("messages@pdfreview");
         $this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
         // Config pages. Put here list of php page, stored into pdfreview/admin directory, to use to setup module.
@@ -39,13 +36,8 @@ class modPdfReview extends DolibarrModules
         $this->module_parts = array(
             'css' => array(
                 "/$moduleDir/css/pdfreview.css",
-                "/$moduleDir/css/text_layer_builder.css"
             ),
             'js' => array(
-                "/$moduleDir/js/pdfjs-1.6.210/web/compatibility.js",
-                "/$moduleDir/js/pdfjs-1.6.210/build/pdf.worker.js",
-                "/$moduleDir/js/pdfjs-1.6.210/build/pdf.js",
-                "/$moduleDir/js/text_layer_builder.js",
                 "/$moduleDir/js/pdfreview.js.php"
             ),
         );

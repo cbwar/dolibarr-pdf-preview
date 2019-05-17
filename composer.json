@@ -1,0 +1,17 @@
+{
+    "name": "cbwar/dolibarr-invoices-review",
+    "license": "proprietary",
+    "type": "dolibarr-plugin",
+    "description": "",
+    "authors": [
+        {
+            "name": "Raphael Lisch",
+            "email": "raphael.lisch@gmail.com"
+        }
+    ],
+    "autoload": {
+        "files": [
+            "lib/helpers.php"
+        ]
+    }
+}
