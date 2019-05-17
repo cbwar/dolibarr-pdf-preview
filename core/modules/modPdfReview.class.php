@@ -23,13 +23,13 @@ class modPdfReview extends \DolibarrModules
         $this->numero = 7104065;
         $this->rights_class = 'pdfreview';
         $this->special = 0; // Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
-        $this->family = "financial"; // Family can be 'crm','financial','hr','projects','products','ecm','technic','interface','other'
+        $this->family = 'financial'; // Family can be 'crm','financial','hr','projects','products','ecm','technic','interface','other'
         $this->name = preg_replace('/^mod/i', '', get_class($this));
-        $this->description = "Rendu des fichiers PDF dans les factures";
+        $this->description = 'Rendu des fichiers PDF dans les factures';
         $this->editor_name = 'Lachhab Ismail, Lisch Raphael';
         $this->editor_url = 'lachhab.ismail@gmail.com, raphael.lisch@gmail.com';
         $this->version = '1.1';
-        $this->langfiles = array("messages@pdfreview");
+        $this->langfiles = array('messages@pdfreview');
         $this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
         // Config pages. Put here list of php page, stored into pdfreview/admin directory, to use to setup module.
         $this->config_page_url = array("setup.php@$moduleDir");
