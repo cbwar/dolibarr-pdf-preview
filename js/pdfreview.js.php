@@ -5,6 +5,7 @@ if (false === (@include '../../main.inc.php')) // From htdocs directory
 header('Content-type: text/javascript; charset=UTF-8');
 
 print("var DOL_URL_ROOT = '" . DOL_URL_ROOT . "';\n");
+print("var PDFREVIEW_DIR = '" . basename(dirname(__DIR__)) . "';\n");
 
 ?>
 
@@ -18,10 +19,10 @@ function pdf_review_find_pdf_url() {
 
     if (hrefOrigin.searchParams.has('facid') || hrefOrigin.searchParams.has('id') || $tab.length > 0) {
 
-        if ($('#builddoc_form > .liste > tbody > tr').length > 2)
-            pdfUrl = $('#builddoc_form > .liste > tbody > tr:eq(2) > td > a:eq(0)').attr('href');
+        if ($('#builddoc_form .liste > tbody > tr').length > 2)
+            pdfUrl = $('#builddoc_form .liste > tbody > tr:eq(2) > td > a:eq(0)').attr('href');
         else
-            pdfUrl = $('#builddoc_form > .liste > tbody > tr:eq(1) > td > a:eq(0)').attr('href');
+            pdfUrl = $('#builddoc_form .liste > tbody > tr:eq(1) > td > a:eq(0)').attr('href');
     }
 
     if (pdfUrl == undefined || pdfUrl == '') {
@@ -43,7 +44,7 @@ function pdf_review_load_iframe(pdfUrl) {
     }
 
     if (pdfUrl !== undefined) {
-        var urlView = hrefOrigin.origin + '/' + DOL_URL_ROOT + '/custom/pdfreview/js/pdfjs-1.6.210/web/viewer.html?pdfurl=' + pdfUrl;
+        var urlView = hrefOrigin.origin + '/' + DOL_URL_ROOT + '/custom/' + PDFREVIEW_DIR + '/js/pdfjs-1.6.210/web/viewer.html?pdfurl=' + pdfUrl;
         console.log('pdf_review_load_iframe: urlView = ' + urlView);
 
         return $('<iframe id="pdf-viewer" src="' + urlView + '"></iframe>');
@@ -140,7 +141,7 @@ $(document).ready(function () {
 
     var pathReview = [
         {
-            path: DOL_URL_ROOT + "/compta/facture.php",
+            path: DOL_URL_ROOT + "/compta/facture/card.php",
             position: '<?= $conf->global->position_facture_client ?>'
         },
         {
@@ -189,7 +190,9 @@ $(document).ready(function () {
     });
 //    console.dir(currentPage);
 
-    if (currentPage.length > 0 && invoice_quick_add_step() != 1 && hrefOrigin.pathname != DOL_URL_ROOT + "/accountancy/supplier/list.php") {
+    var invoice_quick_add = typeof invoice_quick_add_step === 'function' && invoice_quick_add_step() != 1 || true
+
+    if (currentPage.length > 0 && invoice_quick_add && hrefOrigin.pathname != DOL_URL_ROOT + "/accountancy/supplier/list.php") {
         pdf_review_show_pdf(currentPage[0].position);
     }
 });
