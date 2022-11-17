@@ -1,12 +1,12 @@
 {
-    "name": "cbwar/dolibarr-invoices-review",
+    "name": "cbwar/dolibarr-pdf-preview",
     "license": "proprietary",
     "type": "dolibarr-plugin",
     "description": "",
     "authors": [
         {
             "name": "Raphael Lisch",
-            "email": "raphael.lisch@gmail.com"
+            "email": "cbwar@protonmail.com"
         }
     ],
     "autoload": {
