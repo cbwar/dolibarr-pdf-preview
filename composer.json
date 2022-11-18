@@ -10,8 +10,8 @@
         }
     ],
     "autoload": {
-        "files": [
-            "lib/helpers.php"
-        ]
+        "psr-4": {
+            "CBWar\\PDFPreview\\": "classes/"
+        }
     }
 }

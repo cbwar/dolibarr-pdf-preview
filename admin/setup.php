@@ -1,5 +1,8 @@
 <?php
-require_once __DIR__ . '/../../../main.inc.php';
+
+use CBWar\PDFPreview\PDFPreview;
+
+require_once dirname(__DIR__) . '/bootstrap.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmdirectory.class.php';
 
@@ -8,35 +11,25 @@ require_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmdirectory.class.php';
 /** @var DoliDB $db */
 /** @var Conf $conf */
 
-if (!$user->admin || empty($conf->pdfpreview->enabled)) {
+if (!$user->admin) {
 	accessforbidden();
 }
+$langs->loadLangs(array('admin'));
 
-$options = [
-	'Factures clients' => 'position_facture_client',
-	'Factures fournisseurs' => 'position_facture_fournisseur',
-	'Propositions commerciales' => 'position_facture_proposition_commerciale',
-	'Commandes clients' => 'position_facture_commande_client',
-	'Commandes fournisseurs' => 'position_facture_commande_fourniseure',
-	'Propositions commerciale fournisseurs' => 'position_facture_proposition_commerciale_fournisseur',
-];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-	foreach ($options as $label => $code) {
+	foreach (PDFPreview::getLabels() as $code => $label) {
 		dolibarr_set_const($db, $code, (int)GETPOST($code, 'int'), 'chaine', 0, $label, $conf->entity);
 	}
 	/** @var Translate $langs */
-	setEventMessages($langs->trans("SetupSaved"), []);
+	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 }
 
-$langs->load("pdfpreview@pdfpreview");
+$title = $langs->trans("");
+llxHeader('', $langs->trans("PDF Preview Setup"));
 
-$title = $langs->trans("pdfpreview setup");
-llxHeader('', $title);
-
-$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("Back to module list") . '</a>';
-
-print load_fiche_titre($title, $linkback, 'setup');
+$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
+print load_fiche_titre($langs->trans("PDF Preview Setup"), $linkback, 'title_setup');
 
 function print_opt(string $label, string $code): void
 {
@@ -65,12 +58,12 @@ function print_opt(string $label, string $code): void
 		<table class="noborder">
 			<thead>
 			<tr class="liste_titre">
-				<th><?= $langs->trans("Facture") ?></th>
+				<th><?= $langs->trans("Invoice") ?></th>
 				<th><?= $langs->trans("Position") ?></th>
 			</tr>
 			</thead>
 			<tbody>
-			<?php foreach ($options as $label => $code) {
+			<?php foreach (PDFPreview::getLabels() as $code => $label) {
 				print_opt($label, $code);
 			} ?>
 			</tbody>
