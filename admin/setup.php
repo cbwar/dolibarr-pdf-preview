@@ -7,7 +7,7 @@ if (false === (@include '../../main.inc.php')) // From htdocs directory
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmdirectory.class.php';
 
-if (!$user->admin or empty($conf->pdfreview->enabled))
+if (!$user->admin or empty($conf->pdfpreview->enabled))
     accessforbidden();
 
 $action = GETPOST('action', 'alpha');
@@ -27,9 +27,9 @@ if ($action == 'save') {
     dolibarr_set_const($db, "position_facture_fournisseur", $position_facture_fournisseur, 'chaine', 0, "Factures fournisseurs", $conf->entity);
 }
 
-$langs->load("pdfreview@pdfreview");
+$langs->load("pdfpreview@pdfpreview");
 
-$title = $langs->trans("pdfreview setup");
+$title = $langs->trans("pdfpreview setup");
 llxHeader('', $title);
 
 $linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("Back to module list") . '</a>';
