@@ -1,30 +1,32 @@
 <?php
-
-
-if (false === (@include '../../main.inc.php')) // From htdocs directory
-    require '../../../main.inc.php'; // From "custom" directory
-
+require_once __DIR__ . '/../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmdirectory.class.php';
 
-if (!$user->admin or empty($conf->pdfpreview->enabled))
-    accessforbidden();
+/** @var User $user */
+/** @var Translate $langs */
+/** @var DoliDB $db */
+/** @var Conf $conf */
 
-$action = GETPOST('action', 'alpha');
-if ($action == 'save') {
-    $position_facture_client = (int)GETPOST('position_facture_client', 'int');
-    $position_facture_proposition_commerciale = (int)GETPOST('position_facture_proposition_commerciale', 'int');
-    $position_facture_commande_client = (int)GETPOST('position_facture_commande_client', 'int');
-    $position_facture_commande_fourniseure = (int)GETPOST('position_facture_commande_fourniseure', 'int');
-    $position_facture_proposition_commerciale_fournisseur = (int)GETPOST('position_facture_proposition_commerciale_fournisseur', 'int');
-    $position_facture_fournisseur = (int)GETPOST('position_facture_fournisseur', 'int');
+if (!$user->admin || empty($conf->pdfpreview->enabled)) {
+	accessforbidden();
+}
 
-    dolibarr_set_const($db, "position_facture_client", $position_facture_client, 'chaine', 0, "Factures clients", $conf->entity);
-    dolibarr_set_const($db, "position_facture_proposition_commerciale", $position_facture_proposition_commerciale, 'chaine', 0, "Propositions commerciales", $conf->entity);
-    dolibarr_set_const($db, "position_facture_commande_client", $position_facture_commande_client, 'chaine', 0, "Commandes clients", $conf->entity);
-    dolibarr_set_const($db, "position_facture_commande_fourniseure", $position_facture_commande_fourniseure, 'chaine', 0, "Commandes fournisseurs", $conf->entity);
-    dolibarr_set_const($db, "position_facture_proposition_commerciale_fournisseur", $position_facture_proposition_commerciale_fournisseur, 'chaine', 0, "Propositions commerciale fournisseurs", $conf->entity);
-    dolibarr_set_const($db, "position_facture_fournisseur", $position_facture_fournisseur, 'chaine', 0, "Factures fournisseurs", $conf->entity);
+$options = [
+	'Factures clients' => 'position_facture_client',
+	'Factures fournisseurs' => 'position_facture_fournisseur',
+	'Propositions commerciales' => 'position_facture_proposition_commerciale',
+	'Commandes clients' => 'position_facture_commande_client',
+	'Commandes fournisseurs' => 'position_facture_commande_fourniseure',
+	'Propositions commerciale fournisseurs' => 'position_facture_proposition_commerciale_fournisseur',
+];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+	foreach ($options as $label => $code) {
+		dolibarr_set_const($db, $code, (int)GETPOST($code, 'int'), 'chaine', 0, $label, $conf->entity);
+	}
+	/** @var Translate $langs */
+	setEventMessages($langs->trans("SetupSaved"), []);
 }
 
 $langs->load("pdfpreview@pdfpreview");
@@ -33,87 +35,49 @@ $title = $langs->trans("pdfpreview setup");
 llxHeader('', $title);
 
 $linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("Back to module list") . '</a>';
-print_fiche_titre($title, $linkback, 'setup');
 
-print '<form method="post" action="' . $_SERVER["PHP_SELF"] . '">';
-print '<input type="hidden" name="action" value="save">';
-print '<table class="noborder" width="100%">' . "\n";
+print load_fiche_titre($title, $linkback, 'setup');
 
-print '<tr class="liste_titre">';
-print '  <td>' . $langs->trans("Facture") . '</td>';
-print '  <td >' . $langs->trans("Position") . '</td>';
-print '</tr>';
+function print_opt(string $label, string $code): void
+{
+	global $conf;
+	global $db;
+	$value = (int)dolibarr_get_const($db, $code, $conf->entity)
+	?>
+	<tr class="impair">
+		<td class="fieldrequired">
+			<label for="<?= $code ?>"><?= $label ?></label>
+		</td>
+		<td>
+			<select name="<?= $code ?>" id="<?= $code ?>">
+				<option value="0" <?= ($value === 0 ? 'selected="selected"' : '') ?>>Non</option>
+				<option value="1" <?= ($value === 1 ? 'selected="selected"' : '') ?>>Afficher à droite</option>
+				<option value="2" <?= ($value === 2 ? 'selected="selected"' : '') ?>>Afficher en bas</option>
+			</select>
+		</td>
+	</tr>
+	<?php
+}
 
-print '<tr class="impair">';
-print '  <td align="left" class="fieldrequired">Factures clients</td>';
-print '  <td>';
-print '<select name="position_facture_client" id="position_facture_client">';
-print '<option value="0"' . ($conf->global->position_facture_client == 0 ? ' selected="selected"' : '') . '>Non</option>';
-print '<option value="1"' . ($conf->global->position_facture_client == 1 ? ' selected="selected"' : '') . '>Afficher à droite</option>';
-print '<option value="2"' . ($conf->global->position_facture_client == 2 ? ' selected="selected"' : '') . '>Afficher en bas</option>';
-print '</select>';
-print '  </td>';
-print '</tr>';
-
-print '<tr class="impair">';
-print '  <td align="left" class="fieldrequired">Factures fournisseurs</td>';
-print '  <td>';
-print '<select name="position_facture_fournisseur" id="position_facture_fournisseur">';
-print '<option value="0"' . ($conf->global->position_facture_fournisseur == 0 ? ' selected="selected"' : '') . '>Non</option>';
-print '<option value="1"' . ($conf->global->position_facture_fournisseur == 1 ? ' selected="selected"' : '') . '>Afficher à droite</option>';
-print '<option value="2"' . ($conf->global->position_facture_fournisseur == 2 ? ' selected="selected"' : '') . '>Afficher en bas</option>';
-print '</select>';
-print '  </td>';
-print '</tr>';
-
-print '<tr class="impair">';
-print '  <td align="left" class="fieldrequired">Propositions commerciales</td>';
-print '  <td>';
-print '<select name="position_facture_proposition_commerciale" id="position_facture_proposition_commerciale">';
-print '<option value="0"' . ($conf->global->position_facture_proposition_commerciale == 0 ? ' selected="selected"' : '') . '>Non</option>';
-print '<option value="1"' . ($conf->global->position_facture_proposition_commerciale == 1 ? ' selected="selected"' : '') . '>Afficher à droite</option>';
-print '<option value="2"' . ($conf->global->position_facture_proposition_commerciale == 2 ? ' selected="selected"' : '') . '>Afficher en bas</option>';
-print '</select>';
-print '  </td>';
-print '</tr>';
-
-print '<tr class="impair">';
-print '  <td align="left" class="fieldrequired">Commandes clients</td>';
-print '  <td>';
-print '<select name="position_facture_commande_client" id="position_facture_commande_client">';
-print '<option value="0"' . ($conf->global->position_facture_commande_client == 0 ? ' selected="selected"' : '') . '>Non</option>';
-print '<option value="1"' . ($conf->global->position_facture_commande_client == 1 ? ' selected="selected"' : '') . '>Afficher à droite</option>';
-print '<option value="2"' . ($conf->global->position_facture_commande_client == 2 ? ' selected="selected"' : '') . '>Afficher en bas</option>';
-print '</select>';
-print '  </td>';
-print '</tr>';
-
-print '<tr class="impair">';
-print '  <td align="left" class="fieldrequired">Commandes fournisseurs</td>';
-print '  <td>';
-print '<select name="position_facture_commande_fourniseure" id="position_facture_commande_fourniseure">';
-print '<option value="0"' . ($conf->global->position_facture_commande_fourniseure == 0 ? ' selected="selected"' : '') . '>Non</option>';
-print '<option value="1"' . ($conf->global->position_facture_commande_fourniseure == 1 ? ' selected="selected"' : '') . '>Afficher à droite</option>';
-print '<option value="2"' . ($conf->global->position_facture_commande_fourniseure == 2 ? ' selected="selected"' : '') . '>Afficher en bas</option>';
-print '</select>';
-print '  </td>';
-print '</tr>';
-
-print '<tr class="impair">';
-print '  <td align="left" class="fieldrequired">Propositions commerciale fournisseurs</td>';
-print '  <td>';
-print '<select name="position_facture_proposition_commerciale_fournisseur" id="position_facture_proposition_commerciale_fournisseur">';
-print '<option value="0"' . ($conf->global->position_facture_proposition_commerciale_fournisseur == 0 ? ' selected="selected"' : '') . '>Non</option>';
-print '<option value="1"' . ($conf->global->position_facture_proposition_commerciale_fournisseur == 1 ? ' selected="selected"' : '') . '>Afficher à droite</option>';
-print '<option value="2"' . ($conf->global->position_facture_proposition_commerciale_fournisseur == 2 ? ' selected="selected"' : '') . '>Afficher en bas</option>';
-print '</select>';
-print '  </td>';
-print '</tr>';
-
-
-print '</table><br>';
-print '<center><input type="submit" class="button" value="' . $langs->trans("Modify") . '"></center>';
-print '</form>';
-
-llxFooter();
 ?>
+	<form method="post">
+		<input type="hidden" name="action" value="save">
+		<table class="noborder">
+			<thead>
+			<tr class="liste_titre">
+				<th><?= $langs->trans("Facture") ?></th>
+				<th><?= $langs->trans("Position") ?></th>
+			</tr>
+			</thead>
+			<tbody>
+			<?php foreach ($options as $label => $code) {
+				print_opt($label, $code);
+			} ?>
+			</tbody>
+		</table>
+		<br>
+		<input type="submit" class="button" value="<?= $langs->trans("Save") ?>">
+	</form>
+
+<?php
+llxFooter();
